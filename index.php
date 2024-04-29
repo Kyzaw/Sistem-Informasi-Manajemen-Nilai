@@ -20,7 +20,7 @@ require 'function.php';
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" href="index.php">Nilai Praktikum</a>
+        <a class="navbar-brand ps-3" href="index.php">Sistem Informasi</a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
                 class="fas fa-bars"></i></button>
@@ -49,43 +49,62 @@ require 'function.php';
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Dashboard</h1>
+                    <h1 class="mt-4">Nilai Praktikum</h1>
+                    <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">Perancangan Basis Data</li>
+                        </ol>
                     <div class="container mt-3">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-                            Tambah Nilai
-                        </button>
-                        <hr>
                     </div>
                     <div class="card mb-4">
                         <div class="card-body">
                             <table id="datatablesSimple">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+                                    Masukan Nilai
+                                </button>
+                                <br><br>
                                 <thead>
                                     <tr>
                                         <th>No</th>
                                         <th>Nama</th>
+                                        <th>Materi</th>
                                         <th>Nilai</th>
                                         <th>Tanggal</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                <?php
+                                // Assuming the relationships between tables are:
+                                // mahasiswa.idmhs = nilai.idmhs
+                                // nilai.idmateri = materi.idmateri
+                                
+                                $query = "SELECT * from mahasiswa 
+                                        INNER JOIN materi ON materi.kdmateri
+                                        INNER JOIN nilai ON nilai.tanggal
+                                        ";
 
-                                    <?php
-                                    $ambilsemuadata = mysqli_query($conn, "select * from mahasiswa");
-                                    $i = 1;
-                                    while($data=mysqli_fetch_array($ambilsemuadata)){    
-                                        $namamhs = $data['namamhs'];
-                                        $nilai = $data['nilai'];
-                                        $tanggal = $data['tanggal'];
-                                        $idmhs = $data['idmhs'];
-                                    
+                                $result = mysqli_query($conn, $query);
+
+                                if (!$result) {
+                                    die("Query failed: " . mysqli_error($conn));
+                                }
+
+                                $i = 1;
+                                while ($data = mysqli_fetch_array($result)) {
+                                    $namamhs = $data['namamhs'];
+                                    $namamateri = $data['namamateri'];
+                                    $nilaimhs = $data['nilaimhs'];
+                                    $tanggal = $data['tanggal'];
+                                    $idmhs = $data['idmhs'];
+
                                     ?>
                                     <tr>
-                                        <td><?=$i++?></td>
-                                        <td><?=$namamhs?></td>
-                                        <td><?=$nilai?></td>
-                                        <td><?=$tanggal?></td>
-                                        <td>
+                                        <td><?= $i++ ?></td>
+                                        <td><?= $namamhs ?></td>
+                                        <td><?= $namamateri ?></td>
+                                        <td><?= $nilaimhs ?></td>
+                                        <td><?= $tanggal ?></td>
+                                    <td>
                                             <button type="button" class="btn btn-warning" data-bs-toggle="modal"
                                                 data-bs-target="#edit<?=$idmhs;?>">
                                                 Edit
@@ -95,6 +114,7 @@ require 'function.php';
                                                 Delete
                                             </button>
                                         </td>
+                                       
                                     </tr>
                                     <!--Edit Modal -->
                                     <div class="modal fade" id="edit<?=$idmhs;?>">
@@ -195,7 +215,7 @@ require 'function.php';
 
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title">Tambah Nilai</h4>
+                <h4 class="modal-title">Nilai</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -203,9 +223,10 @@ require 'function.php';
             <form method="post">
                 <div class="modal-body">
                     <input type="text" name="namamhs" placeholder="Nama Mahasiswa" class="form-control" required><br>
+                    <input type="text" name="namamateri"placeholder="Materi"class="form-control"required><br>
                     <input type="number" name="nilai" placeholder="Nilai" class="form-control" required><br>
                     <input type="date" name="tanggal" placeholder="Tanggal" class="form-control"><br>
-                    <button type="submit" class="btn btn-primary" name="tambahnilai">Submit</button>
+                    <button type="submit" class="btn btn-primary" name="nilaimasuk">Submit</button>
                 </div>
             </form>
 

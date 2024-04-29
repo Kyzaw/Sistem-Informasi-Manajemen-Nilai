@@ -2,38 +2,62 @@
 session_start();
 
 // Connect to database
-$conn = mysqli_connect("localhost", "root", "", "nilai500");
+$conn = mysqli_connect("localhost", "root", "", "500ribu");
 if (!$conn) {
   die("Connection failed: " . mysqli_connect_error());
 }
 
 // menambahkan nilai
-if (isset($_POST['tambahnilai'])) {
+if (isset($_POST['nilaimasuk'])) {
   $namamhs = $_POST['namamhs'];
+  $namamateri = $_POST['namamateri'];
   $nilaimhs = $_POST['nilai'];
   $tanggal = $_POST['tanggal'];
 
   $namamhs = mysqli_real_escape_string($conn, $namamhs);
-  $nilaimhs = mysqli_real_escape_string($conn, $nilai);
+  $namamateri = mysqli_real_escape_string($conn, $namamateri);
+  $nilaimhs = mysqli_real_escape_string($conn, $nilaimhs);
   $tanggal = mysqli_real_escape_string($conn, $tanggal);
 
   // Insert into database
-  $query = "INSERT INTO mahasiswa (namamhs, nilai, tanggal) VALUES ('$namamhs', '$nilaimhs',)";
-  $result = mysqli_query($conn, $query);
+  $query1 = "INSERT INTO mahasiswa(namamhs, nilaimhs) VALUES ('$namamhs', '$nilaimhs')";
+  $result1 = mysqli_query($conn, $query1);
 
-  if ($result) {
-    header('Location: index.php');
-    exit;
-  } else {
-    echo 'Gagal menambahkan data: ' . mysqli_error($conn);
+  if ($result1) {
+    header("location:index.php");
+  }else {
+    echo 'gagal mulu';
+    header('location:index.php');
   }
+
+  $query2 = "INSERT into nilai (tanggal) values ('$tanggal')";
+  $result2 = mysqli_query($conn, $query2);
+
+  if ($result2) {
+    header("location:index.php");
+  }else {
+    echo "Gagal mulu:" . mysqli_error($conn);
+    header("location:index.php");
+  }
+  $query3 = "INSERT INTO materi (namamateri) values ('$namamateri')";
+  $result3 = mysqli_query($conn, $query3);
+
+  if($result3) {
+    header("location:index.php");
+  }else {
+    echo "Gagal menambahkan data:" . mysqli_error($conn);
+    header("location:index.php");
+  }
+
+ 
 }
+
 
 //Update Nilai
 if(isset($_POST['updatenilai'])){
   $idmhs = $_POST['idmhs'];
   $namamhs = $_POST['namamhs'];
-  $nilai = $_POST['nilai'];
+  $nilaimhs = $_POST['nilai'];
   $tanggal = $_POST['tanggal'];
 
   $update = mysqli_query($conn,"update mahasiswa set namamhs='$namamhs', nilai='$nilai', tanggal='$tanggal' where idmhs ='$idmhs'");
