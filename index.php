@@ -63,14 +63,13 @@ require 'function.php';
                                     Masukan Nilai
                                 </button>
                                 <br><br>
-                                <button type="button" class="btn btn-primary" id="tambahnilai" data-bs-toggle="modal" data-bs-target="tambahnilai">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahnilai">
                                     Tambah Nilai
                                 </button><br><br>
                                 <thead>
                                     <tr>
                                         <th>No</th>
                                         <th>Nama</th>
-                                        <th>Materi</th>
                                         <th>Nilai</th>
                                         <th>Tanggal</th>
                                         <th>Action</th>
@@ -82,8 +81,7 @@ require 'function.php';
                                 // mahasiswa.idmhs = nilai.idmhs
                                 // nilai.idmateri = materi.idmateri
                                 
-                                $query = "SELECT * from mahasiswa 
-                                        INNER JOIN materi ON mahasiswa.kdmateri = materi.kdmateri";
+                                $query = "SELECT * from mahasiswa";
 
                                 $result = mysqli_query($conn, $query);
 
@@ -94,7 +92,6 @@ require 'function.php';
                                 $i = 1;
                                 while ($data = mysqli_fetch_array($result)) {
                                     $namamhs = $data['namamhs'];
-                                    $namamateri = $data['namamateri'];
                                     $nilaimhs = $data['nilaimhs'];
                                     $tanggal = $data['tanggal'];
                                     $idmhs = $data['idmhs'];
@@ -103,7 +100,6 @@ require 'function.php';
                                     <tr>
                                         <td><?= $i++ ?></td>
                                         <td><?= $namamhs ?></td>
-                                        <td><?= $namamateri ?></td>
                                         <td><?= $nilaimhs ?></td>
                                         <td><?= $tanggal ?></td>
                                     <td>
@@ -210,7 +206,7 @@ require 'function.php';
         crossorigin="anonymous"></script>
     <script src="js/datatables-simple-demo.js"></script>
 </body>
-<!-- The Modal -->
+<!-- Nilai Masuk Modal -->
 <div class="modal fade" id="myModal">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -224,11 +220,48 @@ require 'function.php';
             <!-- Modal body -->
             <form method="post">
                 <div class="modal-body">
-                    <input type="text" name="namamhs" placeholder="Nama Mahasiswa" class="form-control" required><br>
-                    <input type="text" name="namamateri"placeholder="Materi"class="form-control"required><br>
+                    <input type="text" name="namamhs" placeholder="Nama Mahasiswa" class="form-control" required><br> 
                     <input type="number" name="nilai" placeholder="Nilai" class="form-control" required><br>
                     <input type="date" name="tanggal" placeholder="Tanggal" class="form-control"><br>
                     <button type="submit" class="btn btn-primary" name="nilaimasuk">Submit</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- Update Nilai Modal -->
+<div class="modal fade" id="tambahnilai">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Tambah Nilai</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal body -->
+            <form method="post">
+                <div class="modal-body">
+                    
+                    <select name="namanya" class="form-control">
+                    <?php
+                        $ambilsemuadata = mysqli_query($conn,"select * from mahasiswa");
+                        while($fetcharray = mysqli_fetch_array($ambilsemuadata)){
+                            $namanya = $fetcharray["namamhs"];
+                            $idnya = $fetcharray["idmhs"];
+                    ?>
+
+                    <option value="<?=$idnya;?>"><?=$namanya;?></option>
+
+                    <?php
+                        }
+                    ?>
+                    </select><br>
+                    <input type="number" name="nilaimasuk" placeholder="Nilai" class="form-control" required><br>
+                    <button type="submit" class="btn btn-primary" name="tambahnilai">Submit</button>
                 </div>
             </form>
 

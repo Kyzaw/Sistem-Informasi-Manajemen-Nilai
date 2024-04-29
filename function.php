@@ -10,12 +10,10 @@ if (!$conn) {
 // menambahkan nilai
 if (isset($_POST['nilaimasuk'])) {
   $namamhs = $_POST['namamhs'];
-  $namamateri = $_POST['namamateri'];
   $nilaimhs = $_POST['nilai'];
   $tanggal = $_POST['tanggal'];
 
   $namamhs = mysqli_real_escape_string($conn, $namamhs);
-  $namamateri = mysqli_real_escape_string($conn, $namamateri);
   $nilaimhs = mysqli_real_escape_string($conn, $nilaimhs);
   $tanggal = mysqli_real_escape_string($conn, $tanggal);
 
@@ -30,20 +28,10 @@ if (isset($_POST['nilaimasuk'])) {
     header('location:index.php');
   }
 
-  $query2 = "INSERT INTO materi (namamateri) values ('$namamateri')";
-  $result2 = mysqli_query($conn, $query2);
-
-  if ($result2) {
-    header("location:index.php");
-  } else {
-    echo "Gagal menambahkan data:" . mysqli_error($conn);
-    header("location:index.php");
-  }
-
 }
 
 
-//Update Nilai
+//Update Info
 if(isset($_POST['updatenilai'])){
   $idmhs = $_POST['idmhs'];
   $namamhs = $_POST['namamhs'];
@@ -59,7 +47,7 @@ if(isset($_POST['updatenilai'])){
   }
 }
 
-//Delete Nilai
+//Delete Info
 if(isset($_POST['deletenilai'])){
   $idmhs = $_POST['idmhs'];
 
@@ -70,4 +58,27 @@ if(isset($_POST['deletenilai'])){
     echo 'Gagal';
     header('location:index.php');
   }
+}
+
+//Tambah Nilai
+if(isset($_POST['tambahnilai'])){
+  $idmhs = $_POST['idnya'];
+  $namanya = $_POST['namanya'];
+  $nilaimasuk = $_POST['nilaimasuk'];
+
+  $ceknilai = mysqli_query($conn,"select * from mahasiswa where namamhs='$namanya'");
+  $ambildatanya = mysqli_fetch_array($ceknilai);
+
+  $nilaisekarang = $ambildatanya["nilaimhs"];
+  $tambahkannilai = $nilaisekarang+$nilaimasuk;
+
+  $nilaimasuk = "INSERT INTO nilai(idmhs, nilaimasuk) VALUES ('$idnya','$nilaimasuk')";
+  $updatenilai = mysqli_query($conn,"update mahasiswa set nilaimhs='$tambahkannilai'where idmhs='$idnya'");
+  if ($nilaimasuk&&$updatenilai) {
+    header("location:index.php");
+  } else {
+    echo 'gagal mulu';
+    header('location:index.php');
+  }
+
 }
