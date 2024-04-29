@@ -11,7 +11,7 @@ require 'function.php';
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Dashboard - SB Admin</title>
+    <title>Sistem Informasi</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -58,10 +58,14 @@ require 'function.php';
                     <div class="card mb-4">
                         <div class="card-body">
                             <table id="datatablesSimple">
+                                
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
                                     Masukan Nilai
                                 </button>
                                 <br><br>
+                                <button type="button" class="btn btn-primary" id="tambahnilai" data-bs-toggle="modal" data-bs-target="tambahnilai">
+                                    Tambah Nilai
+                                </button><br><br>
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -79,9 +83,7 @@ require 'function.php';
                                 // nilai.idmateri = materi.idmateri
                                 
                                 $query = "SELECT * from mahasiswa 
-                                        INNER JOIN materi ON materi.kdmateri
-                                        INNER JOIN nilai ON nilai.tanggal
-                                        ";
+                                        INNER JOIN materi ON mahasiswa.kdmateri = materi.kdmateri";
 
                                 $result = mysqli_query($conn, $query);
 
@@ -133,7 +135,7 @@ require 'function.php';
                                                     <div class="modal-body">
                                                         <input type="text" name="namamhs" value="<?=$namamhs;?>"
                                                             class="form-control" required><br>
-                                                        <input type="number" name="nilai" value="<?=$nilai;?>"
+                                                        <input type="number" name="nilai" value="<?=$nilaimhs;?>"
                                                             class="form-control" required><br>
                                                         <input type="date" name="tanggal" value="<?=$tanggal;?>"
                                                             class="form-control"><br>

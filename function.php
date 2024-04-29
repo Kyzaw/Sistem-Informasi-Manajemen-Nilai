@@ -20,36 +20,26 @@ if (isset($_POST['nilaimasuk'])) {
   $tanggal = mysqli_real_escape_string($conn, $tanggal);
 
   // Insert into database
-  $query1 = "INSERT INTO mahasiswa(namamhs, nilaimhs) VALUES ('$namamhs', '$nilaimhs')";
+  $query1 = "INSERT INTO mahasiswa(namamhs, nilaimhs, tanggal) VALUES ('$namamhs', '$nilaimhs', '$tanggal')";
   $result1 = mysqli_query($conn, $query1);
 
   if ($result1) {
     header("location:index.php");
-  }else {
+  } else {
     echo 'gagal mulu';
     header('location:index.php');
   }
 
-  $query2 = "INSERT into nilai (tanggal) values ('$tanggal')";
+  $query2 = "INSERT INTO materi (namamateri) values ('$namamateri')";
   $result2 = mysqli_query($conn, $query2);
 
   if ($result2) {
     header("location:index.php");
-  }else {
-    echo "Gagal mulu:" . mysqli_error($conn);
-    header("location:index.php");
-  }
-  $query3 = "INSERT INTO materi (namamateri) values ('$namamateri')";
-  $result3 = mysqli_query($conn, $query3);
-
-  if($result3) {
-    header("location:index.php");
-  }else {
+  } else {
     echo "Gagal menambahkan data:" . mysqli_error($conn);
     header("location:index.php");
   }
 
- 
 }
 
 
@@ -60,7 +50,7 @@ if(isset($_POST['updatenilai'])){
   $nilaimhs = $_POST['nilai'];
   $tanggal = $_POST['tanggal'];
 
-  $update = mysqli_query($conn,"update mahasiswa set namamhs='$namamhs', nilai='$nilai', tanggal='$tanggal' where idmhs ='$idmhs'");
+  $update = mysqli_query($conn,"update mahasiswa set namamhs='$namamhs', nilai='$nilaimhs', tanggal='$tanggal' where idmhs ='$idmhs'");
   if ($update) {
     header('location:index.php');
   }else {
