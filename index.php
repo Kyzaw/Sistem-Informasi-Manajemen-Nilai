@@ -79,9 +79,10 @@ require 'function.php';
                                 <?php
                                 // Assuming the relationships between tables are:
                                 // mahasiswa.idmhs = nilai.idmhs
-                                // nilai.idmateri = materi.idmateri
                                 
-                                $query = "SELECT * from mahasiswa";
+                                $query = "SELECT mahasiswa.idmhs, mahasiswa.namamhs, mahasiswa.tanggal, nilai.nilaimhs, transaksi.idmhs
+                                        FROM mahasiswa, nilai, transaksi
+                                        WHERE mahasiswa.idmhs = transaksi.idmhs";
 
                                 $result = mysqli_query($conn, $query);
 
