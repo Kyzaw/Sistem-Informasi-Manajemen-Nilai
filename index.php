@@ -82,7 +82,7 @@ require 'function.php';
                                 
                                 $query = "SELECT mahasiswa.idmhs, mahasiswa.namamhs, mahasiswa.tanggal, nilai.nilaimhs, transaksi.idmhs
                                         FROM mahasiswa, nilai, transaksi
-                                        WHERE mahasiswa.idmhs = transaksi.idmhs";
+                                        WHERE mahasiswa.idmhs = transaksi.idmhs and nilai.idnilai = transaksi.idnilai";
 
                                 $result = mysqli_query($conn, $query);
 
