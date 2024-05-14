@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Charts - SB Admin</title>
+    <title>Grafik Nilai</title>
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -16,7 +16,7 @@
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" href="index.php">Nilai Praktikum</a>
+        <a class="navbar-brand ps-3" href="index.php">Sistem Informasi</a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
                 class="fas fa-bars"></i></button>
@@ -31,73 +31,102 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Nilai
                         </a>
-                        <a class="nav-link" href="charts.html">
+                        <a class="nav-link" href="charts.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                            Diagram
+                            Grafik Nilai
                         </a>
                     </div>
                 </div>
 
             </nav>
         </div>
+
         <div id="layoutSidenav_content">
             <main>
-                <div class="container-fluid px-4">
-                    <h1 class="mt-4">Charts</h1>
-                    <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item"><a href="index.html">Nilai</a></li>
-                        <li class="breadcrumb-item active">Diagram</li>
-                    </ol>
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            Chart.js is a third party plugin that is used to generate the charts in this template. The
-                            charts below have been customized - for further customization options, please visit the
-                            official
-                            <a target="_blank" href="https://www.chartjs.org/docs/latest/">Chart.js documentation</a>
-                            .
-                        </div>
-                    </div>
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-chart-area me-1"></i>
-                            Area Chart Example
-                        </div>
-                        <div class="card-body"><canvas id="myAreaChart" width="100%" height="30"></canvas></div>
-                        <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <i class="fas fa-chart-bar me-1"></i>
-                                    Bar Chart Example
-                                </div>
-                                <div class="card-body"><canvas id="myBarChart" width="100%" height="50"></canvas></div>
-                                <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <i class="fas fa-chart-pie me-1"></i>
-                                    Pie Chart Example
-                                </div>
-                                <div class="card-body"><canvas id="myPieChart" width="100%" height="50"></canvas></div>
-                                <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="container mt-10">
+                    <label for="tanggalPilihan">Pilih Tanggal:</label>
+                    <input type="date" id="tanggalPilihan" name="tanggalPilihan"
+                        value="<?php echo $tanggalTertentu; ?>">
+                    <button onclick="updateChart()">Perbarui Grafik</button>
+                    <canvas id="nilaiChart"></canvas>
                 </div>
+                <div class="container mt-5">
+                    <canvas id="nilaiChart"></canvas>
+                </div>
+
+                <script>
+                    function updateChart() {
+                        var tanggalDipilih = document.getElementById('tanggalPilihan').value;
+                        // Anda bisa menambahkan logika untuk mengambil data baru berdasarkan tanggal yang dipilih
+                        console.log('Tanggal yang dipilih: ' + tanggalDipilih);
+                        // Contoh: Anda bisa memuat ulang halaman dengan parameter tanggal atau memanggil AJAX untuk mengambil data baru
+                        window.location.href = 'charts.php?tanggal=' + tanggalDipilih;
+                    }
+                </script>
+
+                <?php
+                require 'function.php';
+                // Menentukan tanggal tertentu
+                $tanggalTertentu = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d'); // Mengambil tanggal dari URL atau tanggal saat ini
+                
+                // Query untuk mengambil data nilai terbesar pada tanggal tertentu
+                $chartQuery = "SELECT mahasiswa.namamhs, nilai.nilaimhs FROM nilai JOIN mahasiswa ON nilai.idmhs = mahasiswa.idmhs WHERE mahasiswa.tanggal = '$tanggalTertentu' ORDER BY nilai.nilaimhs DESC LIMIT 10";
+                $chartResult = mysqli_query($conn, $chartQuery);
+                $dataNama = [];
+                $dataNilai = [];
+
+                if ($chartResult) {
+                    while ($row = mysqli_fetch_assoc($chartResult)) {
+                        $dataNama[] = $row['namamhs'];
+                        $dataNilai[] = $row['nilaimhs'];
+                    }
+                } else {
+                    echo "Error: " . mysqli_error($conn);
+                }
+                ?>
+
+                <script>
+                    // Mengubah data PHP menjadi JSON untuk JavaScript
+                    var namaMhs = <?php echo json_encode($dataNama, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+                    var nilaiMhs = <?php echo json_encode($dataNilai, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+
+                    // Membuat grafik batang
+                    var ctx = document.getElementById('nilaiChart').getContext('2d');
+                    var nilaiChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: namaMhs,
+                            datasets: [{
+                                label: 'Nilai Mahasiswa pada ' + '<?php echo $tanggalTertentu; ?>',
+                                data: nilaiMhs,
+                                backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                                borderColor: 'rgba(0, 123, 255, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                tooltip: {
+                                    enabled: true
+                                }
+                            }
+                        }
+                    });
+                </script>
             </main>
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Your Website 2023</div>
-                        <div>
-                            <a href="#">Privacy Policy</a>
-                            &middot;
-                            <a href="#">Terms &amp; Conditions</a>
-                        </div>
+                        <div class="text-muted">Copyright &copy; Your Website By Kyzaww</div>
                     </div>
                 </div>
             </footer>
@@ -106,47 +135,7 @@
     <div>
         <canvas id="myChart"></canvas>
     </div>
-    <script>
-    // Get the data from PHP
-    var data = <?php include 'data.php'; ?>;
 
-    // Create the chart
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: data.labels,
-            datasets: [{
-                label: 'Points',
-                data: data.data,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-    </script>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">

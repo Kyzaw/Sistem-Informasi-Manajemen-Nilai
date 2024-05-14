@@ -34,9 +34,9 @@ require 'function.php';
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Nilai
                         </a>
-                        <a class="nav-link" href="chart.php">
+                        <a class="nav-link" href="charts.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                            Diagram
+                            Grafik Nilai
                         </a>
                         <div class="collapse" id="collapsePages" aria-labelledby="headingTwo"
                             data-bs-parent="#sidenavAccordion">
@@ -51,21 +51,24 @@ require 'function.php';
                 <div class="container-fluid px-4">
                     <h1 class="mt-4">Nilai Praktikum</h1>
                     <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Perancangan Basis Data</li>
-                        </ol>
+                        <li class="breadcrumb-item active">Perancangan Basis Data</li>
+                    </ol>
                     <div class="container mt-3">
                     </div>
                     <div class="card mb-4">
                         <div class="card-body">
                             <table id="datatablesSimple">
-                                
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-                                    Masukan Nilai
-                                </button>
-                                <br><br>
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahnilai">
-                                    Tambah Nilai
-                                </button><br><br>
+                                <div class="button-container">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#myModal">
+                                        Masukan Nilai
+                                    </button>
+                                    <br><br>
+                                    <button type="button" class="btn btn-primary" id="button-tambah-nilai"
+                                        data-bs-toggle="modal" data-bs-target="#tambahnilai">
+                                        Tambah Nilai
+                                    </button><br><br>
+                                </div>
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -76,105 +79,105 @@ require 'function.php';
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <?php
-                                // Assuming the relationships between tables are:
-                                // mahasiswa.idmhs = nilai.idmhs
-                                
-                                $query = "SELECT mahasiswa.idmhs, mahasiswa.namamhs, mahasiswa.tanggal, nilai.nilaimhs, transaksi.idmhs
-                                        FROM mahasiswa, nilai, transaksi
-                                        WHERE mahasiswa.idmhs = transaksi.idmhs and nilai.idnilai = transaksi.idnilai";
-
-                                $result = mysqli_query($conn, $query);
-
-                                if (!$result) {
-                                    die("Query failed: " . mysqli_error($conn));
-                                }
-
-                                $i = 1;
-                                while ($data = mysqli_fetch_array($result)) {
-                                    $namamhs = $data['namamhs'];
-                                    $nilaimhs = $data['nilaimhs'];
-                                    $tanggal = $data['tanggal'];
-                                    $idmhs = $data['idmhs'];
-
-                                    ?>
-                                    <tr>
-                                        <td><?= $i++ ?></td>
-                                        <td><?= $namamhs ?></td>
-                                        <td><?= $nilaimhs ?></td>
-                                        <td><?= $tanggal ?></td>
-                                    <td>
-                                            <button type="button" class="btn btn-warning" data-bs-toggle="modal"
-                                                data-bs-target="#edit<?=$idmhs;?>">
-                                                Edit
-                                            </button>
-                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                                data-bs-target="#delete<?=$idmhs;?>">
-                                                Delete
-                                            </button>
-                                        </td>
-                                       
-                                    </tr>
-                                    <!--Edit Modal -->
-                                    <div class="modal fade" id="edit<?=$idmhs;?>">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-
-                                                <!-- Modal Header -->
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">Edit</h4>
-                                                    <button type="button" class="btn-close"
-                                                        data-bs-dismiss="modal"></button>
-                                                </div>
-
-                                                <!-- Modal body -->
-                                                <form method="post">
-                                                    <div class="modal-body">
-                                                        <input type="text" name="namamhs" value="<?=$namamhs;?>"
-                                                            class="form-control" required><br>
-                                                        <input type="number" name="nilai" value="<?=$nilaimhs;?>"
-                                                            class="form-control" required><br>
-                                                        <input type="date" name="tanggal" value="<?=$tanggal;?>"
-                                                            class="form-control"><br>
-                                                        <input type="hidden" name="idmhs" value="<?=$idmhs;?>">
-                                                        <button type="submit" class="btn btn-primary"
-                                                            name="updatenilai">Update</button>
-                                                    </div>
-                                                </form>
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Delete Modal -->
-                                    <div class="modal fade" id="delete<?= $idmhs; ?>">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-
-                                                <!-- Modal Header -->
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">Delete</h4>
-                                                    <button type="button" class="btn-close"
-                                                        data-bs-dismiss="modal"></button>
-                                                </div>
-
-                                                <!-- Modal body -->
-                                                <form method="post">
-                                                    <div class="modal-body">
-                                                        Apakah anda yakin ingin menghapus <?=$namamhs;?>?
-                                                        <input type="hidden" name="idmhs" value="<?= $idmhs; ?>">
-                                                        <br>
-                                                        <br>
-                                                        <button type="submit" class="btn btn-danger"
-                                                            name="deletenilai">Delete</button>
-                                                    </div>
-                                                </form>
-
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     <?php
+                                    // Mengasumsikan hubungan antar tabel adalah:
+                                    // mahasiswa.idmhs = nilai.idmhs
+                                    
+                                    $query = "SELECT mahasiswa.idmhs, mahasiswa.namamhs, nilai.nilaimhs, mahasiswa.tanggal
+                                        FROM mahasiswa
+                                        JOIN nilai ON mahasiswa.idmhs = nilai.idmhs";
+
+                                    $result = mysqli_query($conn, $query);
+
+                                    if (!$result) {
+                                        die("Query gagal: " . mysqli_error($conn));
+                                    }
+
+                                    $i = 1;
+                                    while ($data = mysqli_fetch_assoc($result)) {
+                                        $namamhs = $data['namamhs'];
+                                        $nilaimhs = $data['nilaimhs'];
+                                        $tanggal = $data['tanggal'];
+                                        $idmhs = $data['idmhs'];
+
+                                        ?>
+                                        <tr>
+                                            <td><?= $i++ ?></td>
+                                            <td><?= htmlspecialchars($namamhs) ?></td>
+                                            <td><?= htmlspecialchars($nilaimhs) ?></td>
+                                            <td><?= htmlspecialchars($tanggal) ?></td>
+                                            <td>
+                                                <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                                    data-bs-target="#edit<?= $idmhs; ?>">
+                                                    Edit
+                                                </button>
+                                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                                    data-bs-target="#delete<?= $idmhs; ?>">
+                                                    Delete
+                                                </button>
+                                            </td>
+
+                                        </tr>
+                                        <!--Edit Modal -->
+                                        <div class="modal fade" id="edit<?= $idmhs; ?>">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+
+                                                    <!-- Modal Header -->
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">Edit</h4>
+                                                        <button type="button" class="btn-close"
+                                                            data-bs-dismiss="modal"></button>
+                                                    </div>
+
+                                                    <!-- Modal body -->
+                                                    <form method="post">
+                                                        <div class="modal-body">
+                                                            <input type="text" name="namamhs" value="<?= $namamhs; ?>"
+                                                                class="form-control" required><br>
+                                                            <input type="number" name="nilai" value="<?= $nilaimhs; ?>"
+                                                                class="form-control" required><br>
+                                                            <input type="date" name="tanggal" value="<?= $tanggal; ?>"
+                                                                class="form-control"><br>
+                                                            <input type="hidden" name="idmhs" value="<?= $idmhs; ?>">
+                                                            <button type="submit" class="btn btn-primary"
+                                                                name="updatenilai">Update</button>
+                                                        </div>
+                                                    </form>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Delete Modal -->
+                                        <div class="modal fade" id="delete<?= $idmhs; ?>">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+
+                                                    <!-- Modal Header -->
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">Delete</h4>
+                                                        <button type="button" class="btn-close"
+                                                            data-bs-dismiss="modal"></button>
+                                                    </div>
+
+                                                    <!-- Modal body -->
+                                                    <form method="post">
+                                                        <div class="modal-body">
+                                                            Apakah anda yakin ingin menghapus <?= $namamhs; ?>?
+                                                            <input type="hidden" name="idmhs" value="<?= $idmhs; ?>">
+                                                            <br>
+                                                            <br>
+                                                            <button type="submit" class="btn btn-danger"
+                                                                name="deletenilai">Delete</button>
+                                                        </div>
+                                                    </form>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <?php
                                     }
                                     ?>
                                 </tbody>
@@ -186,12 +189,7 @@ require 'function.php';
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Your Website 2023</div>
-                        <div>
-                            <a href="#">Privacy Policy</a>
-                            &middot;
-                            <a href="#">Terms &amp; Conditions</a>
-                        </div>
+                        <div class="text-muted">Copyright &copy; Your Website by Kyzaww</div>
                     </div>
                 </div>
             </footer>
@@ -221,7 +219,7 @@ require 'function.php';
             <!-- Modal body -->
             <form method="post">
                 <div class="modal-body">
-                    <input type="text" name="namamhs" placeholder="Nama Mahasiswa" class="form-control" required><br> 
+                    <input type="text" name="namamhs" placeholder="Nama Mahasiswa" class="form-control" required><br>
                     <input type="number" name="nilai" placeholder="Nilai" class="form-control" required><br>
                     <input type="date" name="tanggal" placeholder="Tanggal" class="form-control"><br>
                     <button type="submit" class="btn btn-primary" name="nilaimasuk">Submit</button>
@@ -246,22 +244,22 @@ require 'function.php';
             <!-- Modal body -->
             <form method="post">
                 <div class="modal-body">
-                    
+
                     <select name="namanya" class="form-control">
-                    <?php
-                        $ambilsemuadata = mysqli_query($conn,"select * from mahasiswa");
-                        while($fetcharray = mysqli_fetch_array($ambilsemuadata)){
+                        <?php
+                        $ambilsemuadata = mysqli_query($conn, "select * from mahasiswa");
+                        while ($fetcharray = mysqli_fetch_array($ambilsemuadata)) {
                             $namanya = $fetcharray["namamhs"];
                             $idnya = $fetcharray["idmhs"];
-                    ?>
+                            ?>
 
-                    <option value="<?=$idnya;?>"><?=$namanya;?></option>
+                            <option value="<?= $idnya; ?>"><?= $namanya; ?></option>
 
-                    <?php
+                            <?php
                         }
-                    ?>
+                        ?>
                     </select><br>
-                    <input type="number" name="nilaimasuk" placeholder="Nilai" class="form-control" required><br>
+                    <input type="number" name="nilaitambah" placeholder="Nilai" class="form-control" required><br>
                     <button type="submit" class="btn btn-primary" name="tambahnilai">Submit</button>
                 </div>
             </form>
